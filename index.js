@@ -17,6 +17,7 @@ class WorkerConnection extends events.EventEmitter {
 		this.reserved_counter = 0;
 		this.parse = _.includes(config_keys, 'parse') ? config.parse : true;
 		this.logging = _.includes(config_keys, 'log') ? config.log : true;
+		this.logger = _.includes(config_keys, 'logger') ? config.logger : console.log;
 		this.host = _.includes(config_keys, 'host') ? config.host : '127.0.0.1';
 		this.port = _.includes(config_keys, 'port') ? config.port : 11300;
 		this.tube = _.includes(config_keys, 'tube') ? config.tube : 'default';
@@ -46,7 +47,7 @@ class WorkerConnection extends events.EventEmitter {
 			args.push(`${line}\n\t`);
 		}
 		args[args.length - 1] = args[args.length - 1].trim();
-		console.log.apply(null, args);
+		this.logger.apply(null, args);
 	}
 
 	_wrapHandler(tube, handler) {
@@ -197,16 +198,16 @@ class WorkerConnection extends events.EventEmitter {
 
 	_onConnectionError(err) {
 		let _this = this;
-		console.log(err);
+		_this.log(err);
 
 		co(function* () {
 			if (_this.client) {
 				if (_.includes(['ECONNREFUSED', 'EHOSTDOWN', 'EHOSTUNREACH', 'ETIMEDOUT'], err.code)) {
 					_this.client.end();
-					console.log('after end');
+					_this.log('after end');
 					yield _this._idle(100);
 					_this._start();
-					console.log('after connect');
+					_this.log('after connect');
 				}
 				return;
 			}

@@ -173,6 +173,8 @@ BSW constructor takes configuration object:
 - **tube:** beanstalkd tube (default: `'default'`)
 - **max:** Max number of simultaneous jobs reserved (default: `1`)
 - **log:** Enable jobs logging (default: `true`)
+- **logger:** Logger function (default: `console.log`)
+- **timeout:** Timeout in seconds passed to reserve_with_timeout
 
 `start()` function would start the worker.
 

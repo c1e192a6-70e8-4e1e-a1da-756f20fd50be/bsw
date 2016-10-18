@@ -9,6 +9,9 @@ let worker = new Worker({
 	port: config.port,
 	tube: config.tube,
 	max: 3,
-	handler: `${__dirname}/consumer_handler`
+	handler: `${__dirname}/consumer_handler`,
+	logger: function logger() {
+		console.log('beanstalkd workder:', Array.prototype.join.call(arguments, ' '));
+	}
 });
 worker.start();
