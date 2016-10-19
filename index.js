@@ -65,6 +65,10 @@ class WorkerConnection extends events.EventEmitter {
 				let obj = new handler_obj(job_info);
 				let start_time = moment.utc();
 				_this.log(`${job_info.id}:`, 'reserved', `(${JSON.stringify(payload)})`);
+				_this.emit('JOB_RESERVED', {
+					payload: _.clone(payload),
+					job_info: _.clone(job_info)
+				});
 				try {
 					result_or_error = yield obj.run(payload, job_info);
 					action = _this._actionFromResult(result_or_error);
@@ -76,6 +80,12 @@ class WorkerConnection extends events.EventEmitter {
 					let end_time = moment.utc();
 					let delta_time_sec = end_time.diff(start_time, 'seconds');
 					_this.log(`${job_info.id}:`, 'finised,', action, `${delta_time_sec}s`, `(${JSON.stringify(payload)})`);
+					_this.emit('JOB_FINISHED', {
+						action,
+						payload: _.clone(payload),
+						job_info: _.clone(job_info),
+						result: result_or_error
+					});
 					try {
 						if (_.isFunction(obj.final)) {
 							action.push(result_or_error);

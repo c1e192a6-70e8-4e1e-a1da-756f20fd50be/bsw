@@ -162,6 +162,25 @@ You may add an optional post processing of jobs, to do this add `final` function
 - **delay:** job delay in seconds for `release` or `null`
 - **result:** a value returned/thworn (resolved/rejected) from `run`
 
+### Handler Events
+Worker instance would emit `JOB_RESERVED` and `JOB_FINISHED` event during the process.
+
+```js
+.emit('JOB_RESERVED', {
+	payload: _.clone(payload),
+	job_info: _.clone(job_info)
+});
+```
+
+```js
+.emit('JOB_FINISHED', {
+	action,
+	payload: _.clone(payload),
+	job_info: _.clone(job_info),
+	result: result_or_error
+});
+```
+
 ## bsw worker class
 
 BSW worker class is used to connect to beanstalkd server and subscribe to a tube
